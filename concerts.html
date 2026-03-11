@@ -18,6 +18,7 @@
   <link href="css/custom.css" rel="stylesheet">
   
   
+  <!-- JSONLD_START -->
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -126,6 +127,7 @@
   ]
 }
   </script>
+  <!-- JSONLD_END -->
 </head>
 <body>
 
@@ -152,16 +154,18 @@
   <div class="container">
     
    <h1>Upcoming Concerts</h1>
-   <div class="concert-card">
-      <div class="concert-title">I Lamenti di Maria</div>
-      <div class="concert-meta"><span>Mars 7 2026</span><span>19:30</span><span>Luxembourg, Luxembourg</span></div>
-      <strong>Venue:</strong>Chapelle du Glacis<br>
-    </div>
-    <div class="concert-card">
-      <div class="concert-title">Johann Sebastian Bach, BWV 211 "Kaffeekantate"</div>
+   <!-- UPCOMING_START -->
+       <div class="concert-card">
+      <div class="concert-title">Johann Sebastian Bach, BWV 211 "Kaffeekantate": Festival "Bach in the Subways"</div>
       <div class="concert-meta"><span>Mars 21 2026</span><span>12:30</span><span>Luxembourg, Luxembourg</span></div>
+      <strong>Venue:</strong>Nationalmusée<br>
+    </div>
+	<div class="concert-card">
+      <div class="concert-title">"Johann Sebastian Bach, BWV 210 "Weichet nur, betrübte Schatten": Festival "Bach in the Subways"</div>
+      <div class="concert-meta"><span>Mars 21 2026</span><span>15:00</span><span>Luxembourg, Luxembourg</span></div>
       <strong>Venue:</strong>Eglise Protestante<br>
     </div>
+
     <div class="concert-card">
       <div class="concert-title">L'Orfeo - Musique de Clérambault, Purcell, Sartorio, Rossi, Ensemble "Les Promenades"</div>
       <div class="concert-meta"><span>April 25 2026</span><span>17:00</span><span>Luxembourg, Luxembourg</span></div>
@@ -177,14 +181,21 @@
       <div class="concert-meta"><span>August 27,28 2026</span><span>Modane, France</span></div>
       <br>
     </div>
+    <!-- UPCOMING_END -->
     <div class="text-center mt-5 mb-2 text-secondary">
       For booking inquiries and private performances, please get in touch.<br>
       <a href="contact.html" class="btn btn-main mt-3">Contact for bookings</a>
     </div>
 
 
-   <h1>Past Concerts (2025)</h1>
-   
+   <h1>Past Concerts (2025-2026)</h1>
+   <!-- PAST_START -->
+<div class="concert-card">
+      <div class="concert-title">I Lamenti di Maria</div>
+      <div class="concert-meta"><span>Mars 7 2026</span><span>19:30</span><span>Luxembourg, Luxembourg</span></div>
+      <strong>Venue:</strong>Chapelle du Glacis<br>
+    </div>
+
 <div class="concert-card">
       <div class="concert-title">Concert de Noel</div>
       <div class="concert-meta"><span>December 12 2025</span><span>19:00</span><span>Luxembourg, Luxembourg</span></div>
@@ -231,6 +242,7 @@
       <p>The final performance of this run of Ravel's opera.</p>
       <a class="btn btn-main mt-2" href="https://cape.lu/lenfant-et-les-sortileges/14081">Get Tickets</a>
     </div>
+    <!-- PAST_END -->
   </div>
 </section>
 
