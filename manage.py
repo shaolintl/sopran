@@ -690,7 +690,7 @@ def cmd_photos():
             card_html = f"""          <div class="col-md-4">
             <div class="media-card">
               <div class="media-img">
-                <img src="{SITE_URL}/assets/photos/gallery/{f}" alt="{title}" class="img-fluid rounded" loading="lazy">
+                <img src="assets/photos/gallery/{f}" alt="{title}" class="img-fluid rounded" loading="lazy">
               </div>
               <div class="media-desc">
                 <strong>{title}</strong><br>
@@ -714,7 +714,7 @@ def cmd_photos():
             card_html = f"""          <div class="col-md-4">
             <div class="media-card">
               <div class="media-img">
-                <embed src="{SITE_URL}/assets/photos/posters/{f}" type="application/pdf" width="100%" height="600px">
+                <embed src="assets/photos/posters/{f}" type="application/pdf" width="100%" height="600px">
               </div>
             </div>
           </div>"""
