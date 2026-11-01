@@ -631,6 +631,31 @@ def cmd_change():
 
 # ── Command: photos ─────────────────────────────────────────────────────
 
+def make_web_image(src, dst, size="900x900>"):
+    """Write a resized .webp copy of src (image or PDF first page) to dst.
+
+    Uses ImageMagick `convert` (and `pdftoppm` for PDFs). Returns True on success.
+    """
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    try:
+        if src.lower().endswith(".pdf"):
+            tmp = dst + ".tmp"
+            subprocess.run(["pdftoppm", "-f", "1", "-l", "1", "-r", "110", "-jpeg",
+                            "-singlefile", src, tmp], check=True, capture_output=True)
+            src_img = tmp + ".jpg"
+        else:
+            src_img = src
+        subprocess.run(["convert", src_img, "-auto-orient", "-resize", size, "-strip",
+                        "-quality", "80", dst], check=True, capture_output=True)
+        if src_img != src:
+            os.remove(src_img)
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        print(f"    ⚠ Could not create web copy of {os.path.basename(src)}: {e}")
+        print("      Install ImageMagick and poppler-utils (pdftoppm) to fix this.")
+        return False
+
+
 def cmd_photos():
     """Add new gallery photos and posters to media.html."""
     print("=== Add New Photos & Posters ===\n")
@@ -652,14 +677,14 @@ def cmd_photos():
     gallery_files = set()
     if os.path.isdir(gallery_dir):
         for f in os.listdir(gallery_dir):
-            if f.startswith("."):
+            if f.startswith(".") or os.path.isdir(os.path.join(gallery_dir, f)):
                 continue
             gallery_files.add(f)
 
     poster_files = set()
     if os.path.isdir(poster_dir):
         for f in os.listdir(poster_dir):
-            if f.startswith("."):
+            if f.startswith(".") or os.path.isdir(os.path.join(poster_dir, f)):
                 continue
             poster_files.add(f)
 
@@ -687,10 +712,16 @@ def cmd_photos():
                 continue
             desc = input(f"    Description (e.g. 'CAPE, Luxembourg 2025'): ").strip()
 
+            web = os.path.splitext(f)[0] + ".webp"
+            if make_web_image(os.path.join(gallery_dir, f), os.path.join(gallery_dir, "web", web)):
+                img_src = f"assets/photos/gallery/web/{web}"
+            else:
+                img_src = f"assets/photos/gallery/{f}"
+
             card_html = f"""          <div class="col-md-4">
             <div class="media-card">
               <div class="media-img">
-                <img src="assets/photos/gallery/{f}" alt="{title}" class="img-fluid rounded" loading="lazy">
+                <a href="assets/photos/gallery/{f}" target="_blank" rel="noopener"><img src="{img_src}" alt="{title}" class="img-fluid rounded" loading="lazy" decoding="async"></a>
               </div>
               <div class="media-desc">
                 <strong>{title}</strong><br>
@@ -711,10 +742,19 @@ def cmd_photos():
     if new_posters:
         print(f"\nFound {len(new_posters)} new poster(s):")
         for f in new_posters:
+            web = os.path.splitext(f)[0] + ".webp"
+            if make_web_image(os.path.join(poster_dir, f), os.path.join(poster_dir, "previews", web),
+                              size="900x1300>"):
+                img_src = f"assets/photos/posters/previews/{web}"
+            elif not f.lower().endswith(".pdf"):
+                img_src = f"assets/photos/posters/{f}"
+            else:
+                print(f"  ⚠ Skipping {f} (no preview image could be made)")
+                continue
             card_html = f"""          <div class="col-md-4">
             <div class="media-card">
               <div class="media-img">
-                <embed src="assets/photos/posters/{f}" type="application/pdf" width="100%" height="600px">
+                <a href="assets/photos/posters/{f}" target="_blank" rel="noopener"><img src="{img_src}" alt="Concert poster" class="img-fluid" loading="lazy" decoding="async"></a>
               </div>
             </div>
           </div>"""
@@ -762,7 +802,7 @@ def cmd_video():
         print("Could not extract video ID from URL.")
         return
 
-    embed_url = f"https://www.youtube.com/embed/{video_id}"
+    watch_url = f"https://www.youtube.com/watch?v={video_id}"
     html = read_file(MEDIA_HTML)
 
     # Check for duplicates
@@ -773,7 +813,10 @@ def cmd_video():
     video_html = f"""
           <div class="col-md-4">
             <div class="ratio ratio-16x9">
-              <iframe src="{embed_url}" title="YouTube video" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+              <button type="button" class="yt-facade" data-yt="{video_id}" aria-label="Play video">
+                <img src="https://i.ytimg.com/vi/{video_id}/hqdefault.jpg" alt="" loading="lazy" decoding="async">
+                <span class="yt-play" aria-hidden="true"></span>
+              </button>
             </div>
           </div>"""
 
@@ -783,7 +826,7 @@ def cmd_video():
     html = replace_section(html, "<!-- VIDEOS_START -->", "<!-- VIDEOS_END -->", new_videos_section)
 
     write_file(MEDIA_HTML, html)
-    print(f"✓ Added video: {embed_url}")
+    print(f"✓ Added video: {watch_url}")
     post_edit_validation(MEDIA_HTML)
 
 
